@@ -1,8 +1,7 @@
 
 var Acl = require('../src/acl.js');
-var GenericRole = require('../src/generic_role.js');
-var GenericResource = require('../src/generic_resource.js');
-var Prop = require('../src/prop.js');
+
+console.log(Acl);
 
 describe("Acl", function() {
 
@@ -35,9 +34,6 @@ describe("Acl", function() {
 
         role = acl.addRole('testRoleA').getRole('testRoleA');
         expect(role.getRoleId()).toEqual('testRoleA');
-
-        role = acl.addRole(new GenericRole('testRoleB')).getRole('testRoleB');
-        expect(role.getRoleId()).toEqual('testRoleB');
       });
     });
   });
@@ -78,8 +74,8 @@ describe("Acl", function() {
     describe("fails", function() {
       it("when role A does not inherit from role B", function() {
         acl
-          .addRole(new GenericRole('testRoleA'))
-          .addRole(new GenericRole('testRoleB'))
+          .addRole('testRoleA')
+          .addRole('testRoleB')
         ;
 
         var inherits = acl.inheritsRole('testRoleA', 'testRoleB');
@@ -88,9 +84,9 @@ describe("Acl", function() {
 
       it("when role A is not a direct parent of role C", function() {
         acl
-          .addRole(new GenericRole('testRoleA'))
-          .addRole(new GenericRole('testRoleB'), 'testRoleA')
-          .addRole(new GenericRole('testRoleC'), 'testRoleB')
+          .addRole('testRoleA')
+          .addRole('testRoleB', 'testRoleA')
+          .addRole('testRoleC', 'testRoleB')
         ;
 
         var inherits = acl.inheritsRole('testRoleC', 'testRoleA', true);
@@ -101,8 +97,8 @@ describe("Acl", function() {
     describe("succeeds", function() {
       it("when role B does inherit from role A", function() {
         acl
-          .addRole(new GenericRole('testRoleA'))
-          .addRole(new GenericRole('testRoleB'), 'testRoleA')
+          .addRole('testRoleA')
+          .addRole('testRoleB', 'testRoleA')
         ;
 
         var inherits = acl.inheritsRole('testRoleB', 'testRoleA');
@@ -111,9 +107,9 @@ describe("Acl", function() {
 
       it("when role A is not a direct parent of role C", function() {
         acl
-          .addRole(new GenericRole('testRoleA'))
-          .addRole(new GenericRole('testRoleB'), 'testRoleA')
-          .addRole(new GenericRole('testRoleC'), 'testRoleB')
+          .addRole('testRoleA')
+          .addRole('testRoleB', 'testRoleA')
+          .addRole('testRoleC', 'testRoleB')
         ;
 
         var inherits = acl.inheritsRole('testRoleC', 'testRoleA');
@@ -202,7 +198,6 @@ describe("Acl", function() {
         ;
 
         var resource = acl.getResource('testResource');
-        expect(resource instanceof GenericResource).toBe(true);
         expect(resource.getResourceId()).toEqual('testResource');
       });
 
@@ -220,9 +215,6 @@ describe("Acl", function() {
 
         var resourceB = children['resourceB'];
         var resourceC = children['resourceC'];
-
-        expect(resourceB instanceof GenericResource).toBe(true);
-        expect(resourceC instanceof GenericResource).toBe(true);
 
         expect(resourceB.getResourceId()).toEqual('resourceB');
         expect(resourceC.getResourceId()).toEqual('resourceC');
@@ -246,7 +238,6 @@ describe("Acl", function() {
         acl.addResource('testResource');
 
         var resource = acl.getResource('testResource');
-        expect(resource instanceof GenericResource).toBe(true);
         expect(resource.getResourceId()).toEqual('testResource');
       });
     });
@@ -395,9 +386,6 @@ describe("Acl", function() {
 
         var resourceB = children['resourceB'];
         var resourceC = children['resourceC'];
-
-        expect(resourceB instanceof GenericResource).toBe(true);
-        expect(resourceC instanceof GenericResource).toBe(true);
 
         expect(resourceB.getResourceId()).toEqual('resourceB');
         expect(resourceC.getResourceId()).toEqual('resourceC');
@@ -658,255 +646,6 @@ describe("Acl", function() {
 
   });
 
-  /*describe("testCMS", function() {
-    it("succeeds", function() {
-      // Add some roles to the Role registry
-      acl
-        .addRole('guest')
-        .addRole('staff', 'guest')
-        .addRole('editor', 'staff')
-        .addRole('administrator')
-      ;
-
-      // Guest may only view content
-      acl.allow('guest', null, 'view');
-      
-      // Staff inherits view privilege from guest, but also needs additional privileges
-      acl.allow('staff', null, ['edit', 'submit', 'revise']);
-
-      // Editor inherits view, edit, submit, and revise privileges, but also needs additional privileges
-      acl.allow('editor', null, ['publish', 'archive', 'delete']);
-
-      // Administrator inherits nothing but is allowed all privileges
-      acl.allow('administrator');
-
-      // Access control checks based on above permission sets
-
-      // expect( acl.isAllowed('guest', null, 'view') ).toBe(true);
-      // expect( acl.isAllowed('guest', null, 'edit') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'submit') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'revise') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'publish') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'archive') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'delete') ).toBe(false);
-      // expect( acl.isAllowed('guest', null, 'unknown') ).toBe(false);
-      // expect( acl.isAllowed('guest') ).toBe(false);
-
-      // expect( acl.isAllowed('staff', null, 'view') ).toBe(true);
-      // expect( acl.isAllowed('staff', null, 'edit') ).toBe(true);
-      // expect( acl.isAllowed('staff', null, 'submit') ).toBe(true);
-      // expect( acl.isAllowed('staff', null, 'revise') ).toBe(true);
-      // expect( acl.isAllowed('staff', null, 'publish') ).toBe(false);
-      // expect( acl.isAllowed('staff', null, 'archive') ).toBe(false);
-      // expect( acl.isAllowed('staff', null, 'delete') ).toBe(false);
-      // expect( acl.isAllowed('staff', null, 'unknown') ).toBe(false);
-      // expect( acl.isAllowed('staff') ).toBe(false);
-
-      // expect( acl.isAllowed('editor', null, 'view') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'edit') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'submit') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'revise') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'publish') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'archive') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'delete') ).toBe(true);
-      // expect( acl.isAllowed('editor', null, 'unknown') ).toBe(false);
-      // expect( acl.isAllowed('editor') ).toBe(false);
-
-      // expect( acl.isAllowed('administrator', null, 'view') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'edit') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'submit') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'revise') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'publish') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'archive') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'delete') ).toBe(true);
-      // expect( acl.isAllowed('administrator', null, 'unknown') ).toBe(true);
-      // expect( acl.isAllowed('administrator'));  
-
-      // Some checks on specific areas, which inherit access controls from the root ACL node
-      acl
-        .addResource('newsletter')
-        .addResource('pending', 'newsletter')
-        .addResource('gallery')
-        .addResource('profiles', 'gallery')
-        .addResource('config')
-        .addResource('hosts', 'config')
-      ;
-
-      //expect( acl.isAllowed('guest', 'pending', 'view') ).toBe(true);
-      //expect( acl.isAllowed('staff', 'profiles', 'revise') ).toBe(true);
-      //expect( acl.isAllowed('staff', 'pending', 'view') ).toBe(true);
-      //expect( acl.isAllowed('staff', 'pending', 'edit') ).toBe(true);
-      //expect( acl.isAllowed('staff', 'pending', 'publish') ).toBe(false);
-      //expect( acl.isAllowed('staff', 'pending') ).toBe(false);
-      //expect( acl.isAllowed('editor', 'hosts', 'unknown') ).toBe(false);
-      //expect( acl.isAllowed('administrator', 'pending') ).toBe(true);
-
-    });*/
-
-    /*
-    describe("succeeds", function() {
-
-      beforeEach(function() {
-        // Add some roles to the Role registry
-        acl
-          .addRole('guest')
-          .addRole('staff', 'guest')
-          .addRole('editor', 'staff')
-          .addRole('marketing', 'staff')
-          .addRole('administrator')
-        ;
-
-        // Add some resources
-        acl
-          .addResource('newsletter')
-          .addResource('pending', 'newsletter')
-          .addResource('gallery')
-          .addResource('profiles', 'gallery')
-          .addResource('config')
-          .addResource('hosts', 'config')
-          .addResource('news')
-          .addResource('latest', 'news')
-          .addResource('announcement', 'news')
-        ;
-
-        // Guest may only view content
-        acl.allow('guest', null, 'view');
-
-        // Staff inherits view privilege from guest, but also needs additional privileges
-        acl.allow('staff', null, ['edit', 'submit', 'revise']);
-
-        // Editor inherits view, edit, submit, and revise privileges, but also needs additional privileges
-        acl.allow('editor', null, ['publish', 'archive', 'delete']);
-
-        // Administrator inherits nothing but is allowed all privileges
-        acl.allow('administrator');
-
-        // Allow marketing to publish and archive newsletters
-        acl.allow('marketing', 'newsletter', ['publish', 'archive']);
-
-        // Allow marketing to publish and archive latest news
-        acl.allow('marketing', 'latest', ['publish', 'archive']);
-
-        // Deny staff (and marketing, by inheritance) rights to revise latest news
-        acl.deny('staff', 'latest', 'revise');
-
-        // Allow marketing to publish and archive latest news
-        acl.allow('marketing', 'latest', ['publish', 'archive']);
-
-        // Deny everyone access to archive news announcements
-        acl.deny(null, 'announcement', 'archive');
-      });
-
-      it("guest should", function() {
-        expect( acl.isAllowed('guest', null, 'view') ).toBe(true);
-        expect( acl.isAllowed('guest', null, 'edit') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'submit') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'revise') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'publish') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'archive') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'delete') ).toBe(false);
-        expect( acl.isAllowed('guest', null, 'unknown') ).toBe(false);
-        expect( acl.isAllowed('guest') ).toBe(false);
-      });
-
-      it("staff should", function() {
-        expect( acl.isAllowed('staff', null, 'view') ).toBe(true);
-        expect( acl.isAllowed('staff', null, 'edit') ).toBe(true);
-        expect( acl.isAllowed('staff', null, 'submit') ).toBe(true);
-        expect( acl.isAllowed('staff', null, 'revise') ).toBe(true);
-        expect( acl.isAllowed('staff', null, 'publish') ).toBe(false);
-        expect( acl.isAllowed('staff', null, 'archive') ).toBe(false);
-        expect( acl.isAllowed('staff', null, 'delete') ).toBe(false);
-        expect( acl.isAllowed('staff', null, 'unknown') ).toBe(false);
-        expect( acl.isAllowed('staff') ).toBe(false);
-      });
-
-      it("editor should", function() {
-        expect( acl.isAllowed('editor', null, 'view') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'edit') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'submit') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'revise') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'publish') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'archive') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'delete') ).toBe(true);
-        expect( acl.isAllowed('editor', null, 'unknown') ).toBe(false);
-        expect( acl.isAllowed('editor') ).toBe(false);
-      });
-
-      it("administrator should", function() {
-        expect( acl.isAllowed('administrator', null, 'view') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'edit') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'submit') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'revise') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'publish') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'archive') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'delete') ).toBe(true);
-        expect( acl.isAllowed('administrator', null, 'unknown') ).toBe(true);
-        expect( acl.isAllowed('administrator'));      
-      });
-
-      it("mixed should", function() {
-        expect( acl.isAllowed('guest', 'newsletter', 'view') ).toBe(true);
-        expect( acl.isAllowed('guest', 'pending', 'view') ).toBe(true);
-        expect( acl.isAllowed('staff', 'profiles', 'revise') ).toBe(true);
-        expect( acl.isAllowed('staff', 'pending', 'view') ).toBe(true);
-        expect( acl.isAllowed('staff', 'pending', 'edit') ).toBe(true);
-        expect( acl.isAllowed('staff', 'pending', 'publish') ).toBe(false);
-        expect( acl.isAllowed('staff', 'pending') ).toBe(false);
-        expect( acl.isAllowed('editor', 'hosts', 'unknown') ).toBe(false);
-        expect( acl.isAllowed('administrator', 'pending') ).toBe(true);
-      });
-
-      it("marketing should", function() {
-        expect( acl.isAllowed('marketing', null, 'view') ).toBe(true);
-        expect( acl.isAllowed('marketing', null, 'edit') ).toBe(true);
-        expect( acl.isAllowed('marketing', null, 'submit') ).toBe(true);
-        expect( acl.isAllowed('marketing', null, 'revise') ).toBe(true);
-        expect( acl.isAllowed('marketing', null, 'publish') ).toBe(false);
-        expect( acl.isAllowed('marketing', null, 'archive') ).toBe(false);
-        expect( acl.isAllowed('marketing', null, 'delete') ).toBe(false);
-        expect( acl.isAllowed('marketing', null, 'unknown') ).toBe(false);
-        expect( acl.isAllowed('marketing') ).toBe(false);
-      });
-
-      it("mixed 2 should", function() {
-        expect( acl.isAllowed('marketing', 'newsletter', 'publish') ).toBe(true);
-        expect( acl.isAllowed('staff', 'pending', 'publish') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'pending', 'publish') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'newsletter', 'archive') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'newsletter', 'delete') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'newsletter') ).toBe(false);
-      });
-
-      it("marketing 2 should", function() {
-        expect( acl.isAllowed('marketing', 'latest', 'publish') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest', 'archive') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest', 'delete') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'latest', 'revise') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'latest') ).toBe(false);
-      });
-
-      it("mixed 3 should", function() {
-        expect( acl.isAllowed('marketing', 'announcement', 'archive') ).toBe(false);
-        expect( acl.isAllowed('staff', 'announcement', 'archive') ).toBe(false);
-        expect( acl.isAllowed('administrator', 'announcement', 'archive') ).toBe(true);
-        expect( acl.isAllowed('staff', 'latest', 'publish') ).toBe(false);
-        expect( acl.isAllowed('editor', 'announcement', 'archive') ).toBe(true);
-
-        expect( acl.isAllowed('marketing', 'newsletter', 'publish') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'newsletter', 'archive') ).toBe(false);
-        expect( acl.isAllowed('marketing', 'latest', 'archive') ).toBe(false);
-        expect( acl.isAllowed('staff', 'latest', 'revise') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest', 'revise') ).toBe(true);
-
-        expect( acl.isAllowed('marketing', 'latest', 'archive') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest', 'publish') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest', 'edit') ).toBe(true);
-        expect( acl.isAllowed('marketing', 'latest') ).toBe(true);
-      });
-    });
-  });*/
-
   describe("removeAllow", function() {
     beforeEach(function() {
       acl
@@ -1084,27 +823,4 @@ describe("Acl", function() {
     });
 
   });
-
-  /*describe("testAllowNullPermissionAfterResourcesExistShouldAllowAllPermissionsForRole", function() {
-    it("should work", function() {
-      acl.addRole('admin');
-      acl.addResource('newsletter');
-      acl.allow('admin');
-      
-      expect( acl.isAllowed('admin') ).toBe(true);
-    });
-  });*/
-
-  /*describe("_getRules", function() {
-    it("", function() {
-      //var x = acl._getRules();
-      //var x = acl._getRules(new GenericResource('post'));
-      //var x = acl._getRules(new GenericResource('post'), new GenericRole('publisher'));
-      //var x = acl._getRules(null, null, true);
-      //var x = acl._getRules(new GenericResource('post'), null, true);
-      //var x = acl._getRules(new GenericResource('post'), new GenericRole('publisher'), true);
-      //console.log(x);
-    });
-  });*/
-
 });
