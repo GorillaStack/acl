@@ -1,6 +1,6 @@
 {
   "name": "acljs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Plain javascript ACL library - inspired by Zend ACL",
   "main": "index.js",
   "scripts": {
