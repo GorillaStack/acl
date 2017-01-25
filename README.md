@@ -32,7 +32,7 @@ var permissions = {
 };
 ```
 
-Our permissions list contains three top-level requirements, `roles`, `resources` and `rules`. The idea behind this role based ACL is that a specific role has access to resources through specified rules. Don't confuse the elements you define in this list with 'real' objects in your application. The permissions list is simply a structure (or model) we can test against, it is static and therefore it's not required to be stored in a database, you can simply define the ACL as a business object in your application or as part of your business rules. However, if you prefer, or if you ACL is dynamic, you can store the permissions set in database if you wish to do so.
+Our permissions list contains three top-level requirements, `roles`, `resources` and `rules`. The idea behind this role based ACL is that a specific role has access to resources through specified rules. Don't confuse the elements you define in this list with 'real' objects in your application. The ACL is simply be a structure (or model) we can test against, it can be static and therefore it's not required to be stored in a database. You can define the ACL as a business object in your application or as part of your business rules. However, if you prefer, or if your ACL is dynamic, you can store the permissions set in database if you wish to do so.
 
 OK. Let's add some permissions..
 
@@ -44,7 +44,7 @@ var permissions = {
     {name: "guest"},
     {name: "member", parent: "guest"},
     {name: "author", parent: "member"},
-    {name: "admin",  parent: "author"}
+    {name: "admin"}
   ],
   resources: [
     {name: "post"},
@@ -62,7 +62,7 @@ var permissions = {
     {name: "guest"},
     {name: "member", parent: "guest"},
     {name: "author", parent: "member"},
-    {name: "admin",  parent: "author"}
+    {name: "admin"}
   ],
   resources: [
     {name: "post"},
@@ -89,7 +89,7 @@ var permissions = {
     {name: "guest"},
     {name: "member", parent: "guest"},
     {name: "author", parent: "member"},
-    {name: "admin",  parent: "author"}
+    {name: "admin"}
   ],
   resources: [
     {name: "post"},
@@ -119,7 +119,7 @@ var permissions = {
     {name: "guest"},
     {name: "member", parent: "guest"},
     {name: "author", parent: "member"},
-    {name: "admin",  parent: "author"}
+    {name: "admin"}
   ],
   resources: [
     {name: "post"},
