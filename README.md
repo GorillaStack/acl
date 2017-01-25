@@ -10,7 +10,7 @@ ACL is a role/resource based ACL that allows for easy definition of permissions 
 
 ## Installation
 
-TODO: Install through npm.
+    npm install --save acljs
 
 ## Tests
 
