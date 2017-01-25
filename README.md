@@ -1,6 +1,6 @@
 # ACL
 
-ACL is a JavaScript library based on the [Zend Permissions ACL](https://github.com/zendframework/zend-permissions-acl) library.
+ACL is a JavaScript library based on the [Zend Permissions ACL](https://github.com/zendframework/zend-permissions-acl) library that works equally well on the server as in the browser.
 
 ## Introduction
 

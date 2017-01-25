@@ -1,5 +1,5 @@
 
-var Acl = require('../src/acl.js');
+var Acl = require('../index.js');
 
 console.log(Acl);
 
