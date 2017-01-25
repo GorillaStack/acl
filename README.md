@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/GorillaStack/acl.svg?branch=master)](https://travis-ci.org/GorillaStack/acl)
+
 # ACL
 
 ACL is a JavaScript library based on the [Zend Permissions ACL](https://github.com/zendframework/zend-permissions-acl) library that works equally well on the server as in the browser.
@@ -8,7 +10,7 @@ ACL is a role/resource based ACL that allows for easy definition of permissions 
 
 ## Installation
 
-TODO: Install through npm.
+    npm install --save acljs
 
 ## Tests
 

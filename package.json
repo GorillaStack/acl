@@ -1,12 +1,12 @@
 {
-  "name": "acl",
-  "version": "1.0.0",
-  "description": "",
+  "name": "acljs",
+  "version": "1.0.1",
+  "description": "Plain javascript ACL library - inspired by Zend ACL",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine"
   },
-  "author": "",
+  "author": "gorillastack.com",
   "license": "MIT",
   "devDependencies": {
     "jasmine": "^2.5.3"
