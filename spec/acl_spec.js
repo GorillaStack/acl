@@ -1,8 +1,6 @@
 
 var Acl = require('../index.js');
 
-console.log(Acl);
-
 describe("Acl", function() {
 
   var acl = null;
