@@ -690,7 +690,7 @@ describe("Acl", function() {
       ;
     });
 
-    it("gues can read all", function() {
+    it("guest can read all", function() {
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(true);
       expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(true);
     });
