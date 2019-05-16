@@ -44,7 +44,7 @@ function set(obj, path, value) {
 
 function find(list, predicate) {
   // 1. Let O be ? ToObject(list value).
-  if (list == null) {
+  if (list === null || typeof list === 'undefined') {
     throw new TypeError('"list" is null or not defined');
   }
 
@@ -59,7 +59,7 @@ function find(list, predicate) {
   }
 
   // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
-  var thisArg = arguments[1];
+  var thisArg = arguments[2];
 
   // 5. Let k be 0.
   var k = 0;
