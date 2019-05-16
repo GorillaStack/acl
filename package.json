@@ -9,6 +9,6 @@
   "author": "gorillastack.com",
   "license": "MIT",
   "devDependencies": {
-    "jasmine": "^2.5.3"
+    "jasmine": "^3.4.0"
   }
 }
