@@ -2,7 +2,7 @@
 var Acl = require('../index.js');
 
 describe("Acl", function() {
-
+  /** @type {Acl} */
   var acl = null;
 
   beforeEach(function() {
@@ -93,7 +93,7 @@ describe("Acl", function() {
     });
 
     describe("succeeds", function() {
-      it("when role B does inherit from role A", function() {
+      it("when role B does inherit from role A (in resolution order)", function() {
         acl
           .addRole('testRoleA')
           .addRole('testRoleB', 'testRoleA')
@@ -114,7 +114,7 @@ describe("Acl", function() {
         expect(inherits).toBe(true);
       });
     });
-  });  
+  });
 
   describe("removeRole", function() {
     describe("fails", function() {
@@ -351,7 +351,7 @@ describe("Acl", function() {
           .addResource('resourceB', 'resourceA')
           .addResource('resourceC', 'resourceB')
         ;
-        
+
         expect(Object.keys(acl.resources).length).toEqual(3);
         acl.removeResourceAll();
         expect(Object.keys(acl.resources).length).toEqual(0);
@@ -425,221 +425,221 @@ describe("Acl", function() {
       it("visitor can view post", function() {
         expect( acl.isAllowed('visitor', 'post', 'view') ).toBe(true);
       });
-      
+
       it("visitor can view comment", function() {
         expect( acl.isAllowed('visitor', 'comment', 'view') ).toBe(true);
       });
-      
+
       it("visitor can view profile", function() {
         expect( acl.isAllowed('visitor', 'profile', 'view') ).toBe(false);
       });
-      
+
       it("visitor can not edit page", function() {
         expect( acl.isAllowed('visitor', 'page', 'edit') ).toBe(false);
       });
-      
+
       it("visitor can not edit post", function() {
         expect( acl.isAllowed('visitor', 'post', 'edit') ).toBe(false);
       });
-      
+
       it("visitor can not edit comment", function() {
         expect( acl.isAllowed('visitor', 'comment', 'edit') ).toBe(false);
       });
-      
+
       it("visitor can not edit profile", function() {
         expect( acl.isAllowed('visitor', 'profile', 'edit') ).toBe(false);
       });
-      
+
       it("visitor can not like comment", function() {
         expect( acl.isAllowed('visitor', 'comment', 'like') ).toBe(false);
       });
-      
+
       it("visitor can not like post", function() {
         expect( acl.isAllowed('visitor', 'post', 'like') ).toBe(false);
       });
-      
+
       // Member
       it("member can view page", function() {
         expect( acl.isAllowed('member', 'page', 'view') ).toBe(true);
       });
-      
+
       it("member can view post", function() {
         expect( acl.isAllowed('member', 'post', 'view') ).toBe(true);
       });
-      
+
       it("member can view comment", function() {
         expect( acl.isAllowed('member', 'comment', 'view') ).toBe(true);
       });
-      
+
       it("member can view profile", function() {
         expect( acl.isAllowed('member', 'profile', 'view') ).toBe(true);
       });
-      
+
       it("member can not edit page", function() {
         expect( acl.isAllowed('member', 'page', 'edit') ).toBe(false);
       });
-      
+
       it("member can not edit post", function() {
         expect( acl.isAllowed('member', 'post', 'edit') ).toBe(false);
       });
-      
+
       it("member can create comment", function() {
         expect( acl.isAllowed('member', 'comment', 'create') ).toBe(true);
       });
-      
+
       it("member can edit comment", function() {
         expect( acl.isAllowed('member', 'comment', 'edit') ).toBe(true);
       });
-      
+
       it("member can edit profile", function() {
         expect( acl.isAllowed('member', 'profile', 'edit') ).toBe(true);
       });
-      
+
       it("member can like comment", function() {
         expect( acl.isAllowed('member', 'comment', 'like') ).toBe(true);
       });
-      
+
       it("member can like post", function() {
         expect( acl.isAllowed('member', 'post', 'like') ).toBe(true);
       });
-      
+
       // Publisher
       it("publisher can view page", function() {
         expect( acl.isAllowed('publisher', 'page', 'view') ).toBe(true);
       });
-      
+
       it("publisher can view post", function() {
         expect( acl.isAllowed('publisher', 'post', 'view') ).toBe(true);
       });
-      
+
       it("publisher can view comment", function() {
         expect( acl.isAllowed('publisher', 'comment', 'view') ).toBe(true);
       });
-      
+
       it("publisher can view profile", function() {
         expect( acl.isAllowed('publisher', 'profile', 'view') ).toBe(true);
       });
-      
+
       it("publisher can create page", function() {
         expect( acl.isAllowed('publisher', 'page', 'create') ).toBe(true);
       });
-      
+
       it("publisher can edit page", function() {
         expect( acl.isAllowed('publisher', 'page', 'edit') ).toBe(true);
       });
-      
+
       it("publisher can publish page", function() {
         expect( acl.isAllowed('publisher', 'page', 'publish') ).toBe(true);
       });
-      
+
       it("publisher can create post", function() {
         expect( acl.isAllowed('publisher', 'post', 'create') ).toBe(true);
       });
-      
+
       it("publisher can edit post", function() {
         expect( acl.isAllowed('publisher', 'post', 'edit') ).toBe(true);
       });
-      
+
       it("publisher can publish post", function() {
         expect( acl.isAllowed('publisher', 'post', 'publish') ).toBe(true);
       });
-      
+
       it("publisher can create comment", function() {
         expect( acl.isAllowed('publisher', 'comment', 'create') ).toBe(true);
       });
-      
+
       it("publisher can edit comment", function() {
         expect( acl.isAllowed('publisher', 'comment', 'edit') ).toBe(true);
       });
-      
+
       it("publisher can edit profile", function() {
         expect( acl.isAllowed('publisher', 'profile', 'edit') ).toBe(true);
       });
-      
+
       it("publisher can like comment", function() {
         expect( acl.isAllowed('publisher', 'comment', 'like') ).toBe(true);
       });
-      
+
       it("publisher can like post", function() {
         expect( acl.isAllowed('publisher', 'post', 'like') ).toBe(true);
       });
-      
+
       // Editor
       it("edit can view page", function() {
         expect( acl.isAllowed('editor', 'page', 'view') ).toBe(true);
       });
-      
+
       it("editor can view post", function() {
         expect( acl.isAllowed('editor', 'post', 'view') ).toBe(true);
       });
-      
+
       it("editor can view comment", function() {
         expect( acl.isAllowed('editor', 'comment', 'view') ).toBe(true);
       });
-      
+
       it("editor can view profile", function() {
-        expect( acl.isAllowed('editor', 'profile', 'view') ).toBe(true);  
+        expect( acl.isAllowed('editor', 'profile', 'view') ).toBe(true);
       });
-      
+
       it("editor can create page", function() {
         expect( acl.isAllowed('editor', 'page', 'create') ).toBe(true);
       });
-      
+
       it("editor can edit page", function() {
         expect( acl.isAllowed('editor', 'page', 'edit') ).toBe(true);
       });
-      
+
       it("edit can publish page", function() {
         expect( acl.isAllowed('editor', 'page', 'publish') ).toBe(true);
       });
-      
+
       it("editor can create post", function() {
         expect( acl.isAllowed('editor', 'post', 'create') ).toBe(true);
       });
-      
+
       it("editor can edit post", function() {
         expect( acl.isAllowed('editor', 'post', 'edit') ).toBe(true);
       });
-      
+
       it("editor can publish post", function() {
         expect( acl.isAllowed('editor', 'post', 'publish') ).toBe(true);
       });
-      
+
       it("editor can create command", function() {
         expect( acl.isAllowed('editor', 'comment', 'create') ).toBe(true);
       });
-      
+
       it("editor can edit comment", function() {
         expect( acl.isAllowed('editor', 'comment', 'edit') ).toBe(true);
       });
-      
+
       it("editor can edit profile", function() {
         expect( acl.isAllowed('editor', 'profile', 'edit') ).toBe(true);
       });
-      
+
       it("editor can like comment", function() {
         expect( acl.isAllowed('editor', 'comment', 'like') ).toBe(true);
       });
-      
+
       it("editor can like post", function() {
         expect( acl.isAllowed('editor', 'post', 'like') ).toBe(true);
       });
-      
+
       it("editor can delete page", function() {
-        expect( acl.isAllowed('editor', 'page', 'delete') ).toBe(true);  
+        expect( acl.isAllowed('editor', 'page', 'delete') ).toBe(true);
       });
-      
+
       it("editor can delete post", function() {
         expect( acl.isAllowed('editor', 'post', 'delete') ).toBe(true);
       });
-      
+
       // Admin
       it("admin can do everything", function() {
-        expect( acl.isAllowed('admin', 'page', 'delete') ).toBe(true);  
+        expect( acl.isAllowed('admin', 'page', 'delete') ).toBe(true);
         expect( acl.isAllowed('admin', 'page', 'create') ).toBe(true);
-        expect( acl.isAllowed('admin', 'profile', 'delete') ).toBe(true);  
+        expect( acl.isAllowed('admin', 'profile', 'delete') ).toBe(true);
       });
-      
+
     });
 
   });
@@ -659,15 +659,15 @@ describe("Acl", function() {
       it("guest can read blogpost", function() {
         expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(true);
       });
-      
+
       it("guest can read newsletter", function() {
         expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(true);
-      });      
+      });
     });
 
     it("guest can no longer read newsletter", function() {
       acl.removeAllow('guest', 'newsletter', 'read');
-      
+
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(true);
       expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(false);
     });
@@ -702,21 +702,21 @@ describe("Acl", function() {
       acl.addRole('guest');
       acl.addResource('blogpost');
       acl.addResource('newsletter');
-      
+
       acl.allow();
       acl.deny('guest', 'blogpost', 'read');
       acl.deny('guest', 'newsletter', 'read');
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(false);
       expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(false);
-      
+
       acl.removeDeny('guest', 'newsletter', 'read');
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(false);
       expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(true);
-      
+
       acl.removeDeny('guest', null, 'read');
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(true);
       expect( acl.isAllowed('guest', 'newsletter', 'read') ).toBe(true);
-      
+
       // ensure deny null/all resources works
       acl.deny('guest', null, 'read');
       expect( acl.isAllowed('guest', 'blogpost', 'read') ).toBe(false);
@@ -747,8 +747,121 @@ describe("Acl", function() {
     });
   });
 
+  describe('_isResolved', function() {
+    describe('when the item has no parents', () => {
+      it('succeeds for a missing parent', () => {
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], undefined)).toBe(true);
+      });
+
+      it('succeeds for an empty parent list', () => {
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], [])).toBe(true);
+      });
+    });
+
+    describe('when the item has parents', () => {
+      it('succeeds when all the parents exist', () => {
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], 'item1')).toBe(true);
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], ['item1'])).toBe(true);
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], ['item1', 'item2'])).toBe(true);
+      });
+
+      it('fails when none of the parents exist', () => {
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], 'item3')).toBe(false);
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], ['item3'])).toBe(false);
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], ['item3', 'item4'])).toBe(false);
+      });
+
+      it('fails when some but not all of the parents exist', () => {
+        expect(Acl._isResolved([{ name: 'item1' }, { name: 'item2' }], ['item1', 'item2', 'item4'])).toBe(false);
+      });
+    });
+  });
+
+  describe('_orderAndCycleCheck', () => {
+    it('should succeed for an empty list', () => {
+      var result = Acl._orderAndCycleCheck([]);
+      expect(result).toEqual([]);
+    });
+
+    it('should succeed when all the items have no parents', () => {
+      var list = [
+        { name: 'role1' },
+        { name: 'role2' },
+        { name: 'role3' },
+      ];
+      var result = Acl._orderAndCycleCheck(list);
+      expect(result).toEqual(list);
+    });
+
+    it('should succeed for items declared in dependency order', () => {
+      var list = [
+        { name: 'role1' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role3', parent: 'role1' },
+        { name: 'role4', parent: 'role2' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+      ];
+      var result = Acl._orderAndCycleCheck(list);
+      expect(result).toEqual(list);
+    });
+
+    it('should re-order items correctly when declared out of dependency order', () => {
+      var list = [
+        { name: 'role4', parent: 'role2' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+        { name: 'role3', parent: 'role1' },
+        { name: 'role1' },
+      ];
+      var orderedList = [
+        { name: 'role1' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role3', parent: 'role1' },
+        { name: 'role4', parent: 'role2' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+      ];
+      var result = Acl._orderAndCycleCheck(list);
+      expect(result).toEqual(orderedList);
+    });
+
+    it('should fail when a parent does not exist', () => {
+      var list = [
+        { name: 'role4', parent: 'role2' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+        { name: 'role3', parent: 'role6x' },
+        { name: 'role1' },
+      ];
+
+      expect(() => Acl._orderAndCycleCheck(list)).toThrowError(/parent 'role6x' does not exist/);
+    });
+
+    it('should fail when a direct cycle exists', () => {
+      var list = [
+        { name: 'role4', parent: 'role2' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+        { name: 'role3', parent: 'role1' },
+        { name: 'role1', parent: 'role2' },
+      ];
+
+      expect(() => Acl._orderAndCycleCheck(list)).toThrowError(/cycle detected/);
+    });
+
+    it('should fail when an indirect cycle exists', () => {
+      var list = [
+        { name: 'role1', parent: 'role3' },
+        { name: 'role2', parent: 'role1' },
+        { name: 'role3', parent: 'role2' },
+        { name: 'role4', parent: 'role2' },
+        { name: 'role5', parent: ['role2', 'role3'] },
+      ];
+      expect(() => Acl._orderAndCycleCheck(list)).toThrowError(/cycle detected/);
+    });
+  });
+
   describe("permissions loading", function() {
-    it("succeeds", function() {
+    it("succeeds for well-ordered roles and resources lists", function() {
 
       var permissions = {
         roles: [
@@ -820,5 +933,51 @@ describe("Acl", function() {
       expect( acl.isAllowed('admin', 'comment', 'delete') ).toBe(true);
     });
 
+    it('succeeds for out-order role and resources list', () => {
+      var permissions = {
+        roles: [
+          {name: 'author', parent: 'member'},
+          {name: 'member', parent: 'guest' },
+          {name: 'admin'},
+          {name: 'guest'},
+        ],
+        resources: [
+          { name: 'post' },
+          { name: 'comment' },
+        ],
+        rules: [
+          {
+            // guest can view everything.
+            access:     'allow',
+            role:       'guest',
+            privileges: ['read'],
+            resources:  null,
+          }, {
+            // member can create comment.
+            access:     'allow',
+            role:       'member',
+            privileges: ['create'],
+            resources:  ['comment'],
+          }, {
+            // author can create/update/delete post.
+            access:     'allow',
+            role:       'author',
+            privileges: ['create', 'update', 'delete'],
+            resources:  ['post'],
+          }, {
+            // admin can do everything.
+            access:     'allow',
+            role:       'admin',
+            privileges: null,
+            resources:  null,
+          }
+        ],
+      }
+      ;
+
+      acl = new Acl(permissions);
+      expect(acl.inheritsRole('member', 'guest'));
+      expect(acl.inheritsRole('author', 'member'));
+    });
   });
 });
