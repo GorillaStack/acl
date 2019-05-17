@@ -42,6 +42,67 @@ function set(obj, path, value) {
   obj[components[components.length - 1]] = value;
 }
 
+function find(list, predicate) {
+  // 1. Let O be ? ToObject(list value).
+  if (list === null || typeof list === 'undefined') {
+    throw new TypeError('"list" is null or not defined');
+  }
+
+  var o = Object(list);
+
+  // 2. Let len be ? ToLength(? Get(O, "length")).
+  var len = o.length >>> 0;
+
+  // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+  if (typeof predicate !== 'function') {
+    throw new TypeError('predicate must be a function');
+  }
+
+  // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+  var thisArg = arguments[2];
+
+  // 5. Let k be 0.
+  var k = 0;
+
+  // 6. Repeat, while k < len
+  while (k < len) {
+    // a. Let Pk be ! ToString(k).
+    // b. Let kValue be ? Get(O, Pk).
+    // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+    // d. If testResult is true, return kValue.
+    var kValue = o[k];
+    if (predicate.call(thisArg, kValue, k, o)) {
+      return kValue;
+    }
+    // e. Increase k by 1.
+    k++;
+  }
+
+  // 7. Return undefined.
+  return undefined;
+}
+
+function partition(collection, predicate) {
+  var matches = [], fails = [];
+  var i;
+  for (i in collection) {
+    var item = collection[i];
+    if (predicate(item)) {
+      matches.push(item);
+    } else {
+      fails.push(item);
+    }
+  }
+  return [matches, fails];
+}
+
+function itemNameMatching(name) {
+  return function(item) {
+    var existingName = Prop.get(item, 'name');
+    return existingName === name;
+  };
+}
+
 var Prop = {
   set: set,
   get: get
@@ -601,9 +662,9 @@ Acl.prototype.inheritsResource = function(resource, inherit, onlyParent) {
  */
 Acl.prototype.removeResource = function(resource) {
   var resourceId = this.getResource(resource).getResourceId();
-  
+
   var resourcesRemoved = [resourceId];
-  
+
   var resourceParent = this.resources[resourceId]['parent'];
   if (resourceParent) {
     delete this.resources[resourceParent.getResourceId()]['children'][resourceId];
@@ -1381,6 +1442,90 @@ Acl.prototype.getResources = function() {
 };
 
 /**
+ * @private
+ *
+ * Checks the given list of names, that
+ * all exist in the list of resources/roles
+ *
+ * @param {array<object>} list list of roles / resources
+ * @param {array<string>} names names to check
+ *
+ * @returns {boolean} true when all the names exist
+ */
+Acl._isResolved = function(list, names) {
+  if (!names) {
+    return true;
+  }
+  names = typeof names === 'string' ? [names] : names;
+
+  var i, j;
+  for (i in names) {
+    var name = names[i];
+    var exists = find(list, itemNameMatching(name));
+
+    if (!exists) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * @private
+ *
+ * Checks that the given list of parent names all exist in
+ * the allNames list. Throws an exception if this is not the
+ * case.
+ */
+Acl._checkAllExists = function(allNames, parents) {
+  parents = typeof parents === 'string' ? [parents] : parents;
+  parents.forEach(function(parent) {
+    if (allNames.indexOf(parent) < 0) {
+      throw new Error("parent '" + parent + "' does not exist");
+    }
+  });
+}
+
+/**
+ * @private
+ *
+ * This function orders a list of roles or resources based
+ * on their parent structures, checking for cycles and
+ * non-existent parent references.
+ */
+Acl._orderAndCycleCheck = function(list) {
+  // check for non-existent parents
+  var allNames = list.map(function (item) { return item.name; });
+
+  var unresolved = [].concat(list);
+  var resolved = [];
+
+  var firstTime = true;
+
+  while (unresolved.length > 0) {
+    var results = partition(unresolved, function(item) {
+      var parents = Prop.get(item, 'parent');
+      if (firstTime && parents) {
+        Acl._checkAllExists(allNames, parents);
+      }
+      return Acl._isResolved(resolved, parents);
+    });
+    firstTime = false;
+
+    var newResolved = results[0];
+
+    // when nothing is resolved, it could be a cycle
+    if (newResolved.length === 0) {
+      throw new Error('cycle detected');
+    }
+
+    resolved = resolved.concat(newResolved);
+    unresolved = results[1];
+  }
+  return resolved;
+}
+
+/**
  * Loads permissions into the ACL.
  */
 Acl.prototype.load = function(permissions) {
@@ -1392,8 +1537,11 @@ Acl.prototype.load = function(permissions) {
 
   var i;
 
-  for (i in permissions.roles) {
-    var role = permissions.roles[i];
+  var roles = Acl._orderAndCycleCheck(permissions.roles);
+  var resources = Acl._orderAndCycleCheck(permissions.resources);
+
+  for (i in roles) {
+    var role = roles[i];
 
     var name   = Prop.get(role, 'name');
     var parent = Prop.get(role, 'parent');
@@ -1401,8 +1549,8 @@ Acl.prototype.load = function(permissions) {
     this.addRole(name, parent);
   }
 
-  for (i in permissions.resources) {
-    var resource = permissions.resources[i];
+  for (i in resources) {
+    var resource = resources[i];
 
     var name   = Prop.get(resource, 'name');
     var parent = Prop.get(resource, 'parent');
